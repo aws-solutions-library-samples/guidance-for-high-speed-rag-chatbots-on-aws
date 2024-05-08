@@ -50,7 +50,7 @@ _You are responsible for the cost of the AWS services used while running this Gu
 The following table provides a sample cost breakdown for deploying this Guidance with the default parameters in the US West (Oregon) Region.
 
 | AWS service  | Price per 1000 input tokens [USD] | Price per 1000 input tokens [USD] |
-| ----------- | ------------ | ------------ |
+| ------------ | ----------------------------------| --------------------------------- |
 | Amazon Bedrock - Titan Text Embeddings model | $ 0.0001  | n/a |
 | Amazon Bedrock - Claude 3 Sonnet | $ 0.00300 | $ 0.01500 |
 
@@ -78,7 +78,7 @@ In this sample code deployment we are using Linux operating system for Cloud9 EC
 2. Navigate to source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs folder in terminal of your choice:
 
     ```
-    cd /source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs 
+    cd guidance-for-high-speed-rag-chatbots-on-aws/source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs 
     ```
 
 3. Create a .env file in your project directory to add your Aurora PostgreSQL DB cluster details. Your .env file should like the following:
