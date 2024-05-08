@@ -208,14 +208,13 @@ Next, you will load the vector embeddings using Amazon Bedrock’s Embedding mod
 ```
 def get_vectorstore(text_chunks):
     # Create the Titan embeddings
-    embeddings = BedrockEmbeddings(model_id= "amazon.titan-embed-text-v2:0", client=BEDROCK_CLIENT)
+    embeddings = BedrockEmbeddings(model_id= "amazon.titan-embed-text-v1", client=BEDROCK_CLIENT)
     if text_chunks is None:
         return PGVector(
-            connection=connection,
-            embeddings=embeddings,
-            use_jsonb=True
+            connection_string=CONNECTION_STRING,
+            embedding_function=embeddings,
         )
-    return PGVector.from_texts(texts=text_chunks, embedding=embeddings, connection=connection)
+    return PGVector.from_texts(texts=text_chunks, embedding=embeddings, connection_string=CONNECTION_STRING)
 ```
 
 > [!Important]
@@ -228,9 +227,9 @@ def get_vectorstore(text_chunks):
 In this function, a conversation chain is created using the conversational AI model (Anthropic’s Claude 3 Sonnet v1.0), vector store (created in the previous function), and conversation memory ConversationSummaryBufferMemory. This chain allows the generative AI application to engage in conversational interactions.
 ```
 def get_conversation_chain(vectorstore):
-    # Define model_id, client and model keyword arguments for Anthropic Claude 3 Sonnet v1.0
-    llm = Bedrock(model_id="anthropic.claude-3-sonnet-20240229-v1:0", client=BEDROCK_CLIENT)
-    llm.model_kwargs = {"temperature": 0.5, "max_tokens_to_sample": 8191}
+    # Define model_id, client and model keyword arguments for Anthropic Claude v3
+    llm = BedrockChat(model_id="anthropic.claude-3-sonnet-20240229-v1:0", client=BEDROCK_CLIENT)
+    llm.model_kwargs = {"temperature": 0.5, "max_tokens": 8191}
     
     # The text that you give Claude is designed to elicit, or "prompt", a relevant output. A prompt is usually in the form of a question or instructions. When prompting Claude through the API, it is very important to use the correct `\n\nHuman:` and `\n\nAssistant:` formatting.
     # Claude was trained as a conversational agent using these special tokens to mark who is speaking. The `\n\nHuman:` (you) asks a question or gives instructions, and the`\n\nAssistant:` (Claude) responds.
@@ -274,7 +273,7 @@ def get_conversation_chain(vectorstore):
         combine_docs_chain_kwargs={'prompt': PROMPT}
     )
     
-    return conversation_chain
+    return conversation_chain.invoke
 ```
 > [!Note] 
 > Hit Save Remember to save your file! Press Cmd+S on Mac or Ctrl+S on Windows to save your file. Alternatively, click File --> Save.
