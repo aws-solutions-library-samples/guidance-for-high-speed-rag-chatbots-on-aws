@@ -62,7 +62,7 @@ The following table provides a sample cost breakdown for deploying this Guidance
 
 1. An [Aurora PostgreSQL-Compatible Edition DB cluster](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_GettingStartedAurora.CreatingConnecting.AuroraPostgreSQL.html) with [pgvector](https://aws.amazon.com/about-aws/whats-new/2023/07/amazon-aurora-postgresql-pgvector-vector-storage-similarity-search/) support.
 2. Access to [Amazon Bedrock foundation models](https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html) – Amazon Titan and Anthropic Claude.
-3. We recommend using [AWS Cloud9](https://aws.amazon.com/cloud9/) to connect to the Aurora PostgreSQL DB cluster for these labs without the need to open inbound ports, maintain bastion hosts, or manage SSH keys. We also recommend using Mozilla Firefox as the preferred browser for all labs. If you don't already have it, you can download it from [Mozilla Firefox](https://www.mozilla.org/en-US/firefox/new/).
+3. We recommend using [AWS Cloud9](https://aws.amazon.com/cloud9/) to connect to the Aurora PostgreSQL DB cluster for these guidance without the need to open inbound ports, maintain bastion hosts, or manage SSH keys. We also recommend using Mozilla Firefox as the preferred browser for all labs. If you don't already have it, you can download it from [Mozilla Firefox](https://www.mozilla.org/en-US/firefox/new/).
 4. [Install Python](https://docs.aws.amazon.com/cloud9/latest/user-guide/sample-python.html) with the required dependencies (in this post, we use Python v3.9). You can deploy this solution locally on your laptop or via Amazon SageMaker Notebooks.
 
 ### Operating System
@@ -115,7 +115,7 @@ In this sample code deployment we are using Linux operating system for Cloud9 EC
     sudo yum install -y postgresql-contrib sysbench
     ```
 
-    Connect to deployed Aurora PostgreSQL cluster and create the below extension using psql.
+    [Connect to deployed Aurora PostgreSQL cluster](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/babelfish-connect-PostgreSQL.html) and create the below extension using psql.
     ```
     psql
     CREATE EXTENSION vector;
@@ -137,6 +137,8 @@ To use the GenAI Q&A with pgvector and Amazon Aurora PostgreSQL App, follow thes
 
 This guide will walk you through each step to understand and run the code provided in the file /source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/rag_app.py. Follow the instructions below to run the script successfully. 
 
+#Steps:
+
 1. Navigate to python file /source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/ in the Cloud9 IDE window on the left, and and double-click to open the file rag_app.py in a new tab.
 
 2. Import libraries
@@ -145,7 +147,8 @@ Let’s begin by importing the necessary libraries:
 
 ![](source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/static/streamlit_libraries.png)
 
-Note: Next, you will find a series of placeholders separated by # TODO comments. Go through the remaining steps in the lab by filling in the correct code blocks in those placeholders (use the Copy button on the right to copy code).
+> [!Note]
+> Next, you will find a series of placeholders separated by # TODO comments. Go through the remaining steps in the lab by filling in the correct code blocks in those placeholders (use the Copy button on the right to copy code).
 
 2. Take PDFs as input and extract text
 
@@ -194,7 +197,8 @@ def get_vectorstore(text_chunks):
     return PGVector.from_texts(texts=text_chunks, embedding=embeddings, connection=connection)
 ```
 
-Note: PGVector needs the connection string to the database. You can create it from environment variables as shown in the screenshot below: For this lab, scroll down to the main function to find this code, and fill in the values for your Aurora PostgreSQL DB connection. 
+> [!Important]
+> PGVector needs the connection string to the database. You can create it from environment variables as shown in the screenshot below: For this lab, scroll down to the main function to find this code, and fill in the values for your Aurora PostgreSQL DB connection. 
 
 ![](source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/static/streamlit_loadvectors.png)
 
@@ -251,7 +255,8 @@ def get_conversation_chain(vectorstore):
     
     return conversation_chain
 ```
-Note: Hit Save Remember to save your file! Press Cmd+S on Mac or Ctrl+S on Windows to save your file. Alternatively, click File --> Save.
+> [!Note] 
+> Hit Save Remember to save your file! Press Cmd+S on Mac or Ctrl+S on Windows to save your file. Alternatively, click File --> Save.
 
 6. Create a function to handle user input
 
@@ -307,7 +312,8 @@ streamlit run rag_app.py --server.port 8080
 
 7. Let’s ask a different question, a bit more complex – What does "three times the performance of PostgreSQL" mean?
 
-Note: you may either see a similar or a slightly different response:
+    > [!Note] 
+    > you may either see a similar or a slightly different response:
 
    ![](source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/static/execution7.png)
 
