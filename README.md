@@ -62,8 +62,8 @@ The following table provides a sample cost breakdown for deploying this Guidance
 
 1. An [Aurora PostgreSQL-Compatible Edition DB cluster](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_GettingStartedAurora.CreatingConnecting.AuroraPostgreSQL.html) with [pgvector](https://aws.amazon.com/about-aws/whats-new/2023/07/amazon-aurora-postgresql-pgvector-vector-storage-similarity-search/) support.
 2. Access to [Amazon Bedrock foundation models](https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html) – Amazon Titan and Anthropic Claude.
-3. We recommend using [AWS Cloud9](https://aws.amazon.com/cloud9/) to connect to the Aurora PostgreSQL DB cluster for these guidance without the need to open inbound ports, maintain bastion hosts, or manage SSH keys. We also recommend using Mozilla Firefox as the preferred browser for all labs. If you don't already have it, you can download it from [Mozilla Firefox](https://www.mozilla.org/en-US/firefox/new/).
-4. [Install Python](https://docs.aws.amazon.com/cloud9/latest/user-guide/sample-python.html) with the required dependencies (in this post, we use Python v3.9). You can deploy this solution locally on your laptop or via Amazon SageMaker Notebooks.
+3. We recommend using [AWS Cloud9](https://aws.amazon.com/cloud9/) to connect to the Aurora PostgreSQL DB cluster for these guidance without the need to open inbound ports, maintain bastion hosts, or manage SSH keys. We also recommend using Mozilla Firefox as the preferred browser. If you don't already have it, you can download it from [Mozilla Firefox](https://www.mozilla.org/en-US/firefox/new/).
+4. [Install Python](https://docs.aws.amazon.com/cloud9/latest/user-guide/sample-python.html) with the required dependencies (in this post, we use Python v3.9) on AWS Cloud9 IDE. You can deploy this solution locally on your laptop or via Amazon SageMaker Notebooks.
 
 ### Operating System
 In this sample code deployment we are using Linux operating system for Cloud9 EC2 instance and Amazon Aurora Postgresql instance.
@@ -115,12 +115,13 @@ In this sample code deployment we are using Linux operating system for Cloud9 EC
     sudo yum install -y postgresql-contrib sysbench
     ```
 
-    [Connect to deployed Aurora PostgreSQL cluster](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/babelfish-connect-PostgreSQL.html) and create the below extension using psql.
-    ```
-    psql
-    CREATE EXTENSION vector;
-    \q
-    ```
+  6. [Connect to deployed Aurora PostgreSQL cluster](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/babelfish-connect-PostgreSQL.html) and create the below extension using psql.
+
+        ```
+        psql
+        CREATE EXTENSION vector;
+        \q
+        ```
 
 ## Deployment Steps
 
@@ -135,20 +136,37 @@ To use the GenAI Q&A with pgvector and Amazon Aurora PostgreSQL App, follow thes
 
 ### Build Streamlit application
 
-This guide will walk you through each step to understand and run the code provided in the file /source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/rag_app.py. Follow the instructions below to run the script successfully. 
+This guide will walk you through each step to understand and run the code provided in the file `rag_app.py`. Follow the instructions below. 
 
-#Steps:
+**Steps**:
 
-1. Navigate to python file /source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/ in the Cloud9 IDE window on the left, and and double-click to open the file rag_app.py in a new tab.
+1. Navigate to the folder `/source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/` in the Cloud9 IDE window on the left, and double-click to open the file `rag_app.py` in a new tab.
 
 2. Import libraries
 
 Let’s begin by importing the necessary libraries:
-
-![](source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/static/streamlit_libraries.png)
+```
+# Import libraries
+from dotenv import load_dotenv
+from PyPDF2 import PdfReader
+from langchain.vectorstores.pgvector import PGVector
+from langchain.memory import ConversationSummaryBufferMemory
+from langchain.chains import ConversationalRetrievalChain
+from htmlTemplates import css
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.embeddings import BedrockEmbeddings
+from langchain_community.llms import Bedrock
+from langchain_community.chat_models import BedrockChat
+from langchain.prompts import PromptTemplate
+import streamlit as st
+import boto3
+from PIL import Image
+import os
+import traceback
+```
 
 > [!Note]
-> Next, you will find a series of placeholders separated by # TODO comments. Go through the remaining steps in the lab by filling in the correct code blocks in those placeholders (use the Copy button on the right to copy code).
+> Next, you will find a series of placeholders separated by `# TODO` comments. Go through the remaining steps in the lab by filling in the correct code blocks in those placeholders (use the Copy button on the right to copy code).
 
 2. Take PDFs as input and extract text
 
@@ -182,7 +200,7 @@ def get_text_chunks(text):
 
 4. Load vector embeddings into Amazon Aurora PostgreSQL
 
-Next, you will load the vector embeddings using Amazon Bedrock’s Embedding model amazon.titan-embed-text-v1 into an Aurora PostgreSQL DB cluster as the vector database. This function takes the text chunks as input and creates a vector store using Bedrock Embeddings (Titan) and pgvector. Aurora PostgreSQL with the pgvector extension stores the vector representations of the text chunks, enabling efficient retrieval based on semantic similarity.
+Next, you will load the vector embeddings using Amazon Bedrock’s Embedding model amazon.titan-embed-text-v2 into an Aurora PostgreSQL DB cluster as the vector database. This function takes the text chunks as input and creates a vector store using Bedrock Embeddings (Titan) and pgvector. Aurora PostgreSQL with the pgvector extension stores the vector representations of the text chunks, enabling efficient retrieval based on semantic similarity.
 
 ```
 def get_vectorstore(text_chunks):
@@ -278,7 +296,7 @@ Ensure there are no errors in your application and each of the steps in the depl
 
 Now that you have successfully written code for your generative AI chatbot application, it’s time to run the application via Streamlit.
 
-1. Navigate to the folder source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs
+1. Navigate to the folder `/source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs`
 
 Run the following command:
 ```
