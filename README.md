@@ -60,9 +60,10 @@ The following table provides a sample cost breakdown for deploying this Guidance
 
 ## Prerequisites
 
-1. An Aurora PostgreSQL-Compatible Edition DB cluster with pgvector support.
-2. Access to Amazon Bedrock foundation models – Amazon Titan and Anthropic Claude.
-3. Install Python with the required dependencies (in this post, we use Python v3.9). You can deploy this solution locally on your laptop or via Amazon SageMaker Notebooks.
+1. An [Aurora PostgreSQL-Compatible Edition DB cluster](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_GettingStartedAurora.CreatingConnecting.AuroraPostgreSQL.html) with [pgvector](https://aws.amazon.com/about-aws/whats-new/2023/07/amazon-aurora-postgresql-pgvector-vector-storage-similarity-search/) support.
+2. Access to [Amazon Bedrock foundation models](https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html) – Amazon Titan and Anthropic Claude.
+3. We recommend using [AWS Cloud9](https://aws.amazon.com/cloud9/) to connect to the Aurora PostgreSQL DB cluster for these labs without the need to open inbound ports, maintain bastion hosts, or manage SSH keys. We also recommend using Mozilla Firefox as the preferred browser for all labs. If you don't already have it, you can download it from [Mozilla Firefox](https://www.mozilla.org/en-US/firefox/new/).
+4. [Install Python](https://docs.aws.amazon.com/cloud9/latest/user-guide/sample-python.html) with the required dependencies (in this post, we use Python v3.9). You can deploy this solution locally on your laptop or via Amazon SageMaker Notebooks.
 
 ### Operating System
 In this sample code deployment we are using Linux operating system for Cloud9 EC2 instance and Amazon Aurora Postgresql instance.
@@ -71,28 +72,55 @@ In this sample code deployment we are using Linux operating system for Cloud9 EC
 
 1. Clone the GitHub repository to your local machine:
     ```
-    git clone https://github.com/aws-solutions-library-samples/guidance-for-building-nlp-chatbots-and-sentiment-analysis-using-pgvector-and-amzn-aurora-postgresql/
+    git clone https://github.com/aws-solutions-library-samples/guidance-for-high-speed-rag-chatbots-on-aws.git
     ```
    
 2. Navigate to source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs folder in terminal of your choice:
 
-```
-cd ~/source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs 
-```
+    ```
+    cd /source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs 
+    ```
 
 3. Create a .env file in your project directory to add your Aurora PostgreSQL DB cluster details. Your .env file should like the following:
 
-PGVECTOR_DRIVER='psycopg2'
-PGVECTOR_USER='<<Username>>'
-PGVECTOR_PASSWORD='<<Password>>'
-PGVECTOR_HOST='<<Aurora DB cluster host>>'
-PGVECTOR_PORT=5432
-PGVECTOR_DATABASE='<<DBName>>'
+    ```
+    PGVECTOR_DRIVER='psycopg2'
+    PGVECTOR_USER='<<Username>>'
+    PGVECTOR_PASSWORD='<<Password>>'
+    PGVECTOR_HOST='<<Aurora DB cluster host>>'
+    PGVECTOR_PORT=5432
+    PGVECTOR_DATABASE='<<DBName>>'
+    ```
 
 4. The GitHub repository you cloned earlier includes a file requirements.txt which has all the required libraries you need to install for building the QnA chatbot application. Install the libraries by running the following commands:
-```
-pip3.9 install -r requirements.txt
-```
+    ```
+    pip3.9 install -r requirements.txt
+    ```
+
+5. Update the AWS CLI and Install PostgreSQL to establish connectivity to Aurora using AWS Cloud9 IDE.
+    ```
+    # Update the AWS CLI v2
+    sudo rm -rf /usr/local/aws
+    sudo rm /usr/bin/aws
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    unzip awscliv2.zip
+    sudo ./aws/install
+    rm awscliv2.zip
+
+    # Install JQuery for parsing output
+    sudo yum install -y jq
+
+    # Install PostgreSQL 14 client and related utilities
+    sudo amazon-linux-extras install -y postgresql14
+    sudo yum install -y postgresql-contrib sysbench
+    ```
+
+    Connect to deployed Aurora PostgreSQL cluster and create the below extension using psql.
+    ```
+    psql
+    CREATE EXTENSION vector;
+    \q
+    ```
 
 ## Deployment Steps
 
@@ -103,16 +131,21 @@ To use the GenAI Q&A with pgvector and Amazon Aurora PostgreSQL App, follow thes
 2. Ensure that you have added Aurora PostgreSQL DB details to the `.env` file.
 
 3. Ensure you have installed the extension `pgvector` on your Aurora PostgreSQL DB cluster:
-   ```
-   CREATE EXTENSION vector;
-   ```
+
+
 ### Build Streamlit application
 
-1. Import libraries
+This guide will walk you through each step to understand and run the code provided in the file /source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/rag_app.py. Follow the instructions below to run the script successfully. 
+
+1. Navigate to python file /source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/ in the Cloud9 IDE window on the left, and and double-click to open the file rag_app.py in a new tab.
+
+2. Import libraries
 
 Let’s begin by importing the necessary libraries:
 
 ![](source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/static/streamlit_libraries.png)
+
+Note: Next, you will find a series of placeholders separated by # TODO comments. Go through the remaining steps in the lab by filling in the correct code blocks in those placeholders (use the Copy button on the right to copy code).
 
 2. Take PDFs as input and extract text
 
@@ -148,7 +181,20 @@ def get_text_chunks(text):
 
 Next, you will load the vector embeddings using Amazon Bedrock’s Embedding model amazon.titan-embed-text-v1 into an Aurora PostgreSQL DB cluster as the vector database. This function takes the text chunks as input and creates a vector store using Bedrock Embeddings (Titan) and pgvector. Aurora PostgreSQL with the pgvector extension stores the vector representations of the text chunks, enabling efficient retrieval based on semantic similarity.
 
-Note: PGVector needs the connection string to the database. You can create it from environment variables as shown in the screenshot below:
+```
+def get_vectorstore(text_chunks):
+    # Create the Titan embeddings
+    embeddings = BedrockEmbeddings(model_id= "amazon.titan-embed-text-v2:0", client=BEDROCK_CLIENT)
+    if text_chunks is None:
+        return PGVector(
+            connection=connection,
+            embeddings=embeddings,
+            use_jsonb=True
+        )
+    return PGVector.from_texts(texts=text_chunks, embedding=embeddings, connection=connection)
+```
+
+Note: PGVector needs the connection string to the database. You can create it from environment variables as shown in the screenshot below: For this lab, scroll down to the main function to find this code, and fill in the values for your Aurora PostgreSQL DB connection. 
 
 ![](source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/static/streamlit_loadvectors.png)
 
@@ -205,6 +251,7 @@ def get_conversation_chain(vectorstore):
     
     return conversation_chain
 ```
+Note: Hit Save Remember to save your file! Press Cmd+S on Mac or Ctrl+S on Windows to save your file. Alternatively, click File --> Save.
 
 6. Create a function to handle user input
 
