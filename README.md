@@ -12,7 +12,8 @@
 6. [Next Steps](#next-steps)
 7. [Cleanup](#cleanup)
 8. [Notices](#notices)
-9. [Authors](#authors)
+9. [Known Issues](#known-issues)
+10. [Authors](#authors)
 
 ## Overview
 Generative AI – a category of artificial intelligence algorithms that can generate new content based on existing data — has been hailed as the next frontier for various industries, from tech to financial services, e-commerce and healthcare. The driving force behind the capabilities of generative AI chatbots lies in their foundation models. These models consist of expansive neural networks meticulously trained on vast amounts of unstructured, unlabeled data spanning various formats, including text and audio. The versatility of foundation models enables their utilization across a wide range of tasks, showcasing their limitless potential. In this Guidance, we will build an AI chatbot using Amazon Aurora PostgreSQL-Compatible Edition with pgvector enabled as the vector store. You can create an enterprise ready RAG application using a combination of different services including Amazon Bedrock, Amazon Aurora with pgvector as vector database, open-source frameworks such as LangChain for interacting with all the components and Streamlit for building chatbot frontend.
@@ -169,7 +170,7 @@ import traceback
 ```
 
 > [!Note]
-> Next, you will find a series of placeholders separated by `# TODO` comments. Go through the remaining steps in the lab by filling in the correct code blocks in those placeholders (use the Copy button on the right to copy code).
+> Next, you will find a series of placeholders separated by `# TODO` comments. Go through the remaining steps by filling in the correct code blocks in those placeholders (use the Copy button on the right to copy code).
 
 2. Take PDFs as input and extract text
 
@@ -332,8 +333,8 @@ streamlit run rag_app.py --server.port 8080
 
 7. Let’s ask a different question, a bit more complex – What does "three times the performance of PostgreSQL" mean?
 
-    > [!Note] 
-    > you may either see a similar or a slightly different response:
+> [!NOTE] 
+> you may either see a similar or a slightly different response:
 
    ![](source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/static/execution7.png)
 
@@ -379,6 +380,10 @@ This Guidance requires manual deletion of resources created as part of this guid
 
 *Customers are responsible for making their own independent assessment of the information in this Guidance. This Guidance: (a) is for informational purposes only, (b) represents AWS current product offerings and practices, which are subject to change without notice, and (c) does not create any commitments or assurances from AWS and its affiliates, suppliers or licensors. AWS products or services are provided “as is” without warranties, representations, or conditions of any kind, whether express or implied. AWS responsibilities and liabilities to its customers are controlled by AWS agreements, and this Guidance is not part of, nor does it modify, any agreement between AWS and its customers.*
 
+## Known Issues
+> [!Warning]
+> Encountering AxiosError: Request failed with status code 403? --> Check your Streamlit version in terminal with the command pip show streamlit. It should be 1.24.0.Ensure you're using Mozilla Firefox as your browser. This issue is more common if you're using Google Chrome.
+ 
 ### License
 
 The GenAI Q&A Chatbot with pgvector and Amazon Aurora PostgreSQL-compatible edition application is released under the [MIT-0 License](https://spdx.org/licenses/MIT-0.html).
