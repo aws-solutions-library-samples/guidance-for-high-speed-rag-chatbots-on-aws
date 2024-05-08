@@ -321,7 +321,7 @@ streamlit run rag_app.py --server.port 8080
 
     a. Browse and upload PDF files. You can upload multiple PDFs because we set the parameter accept_multiple_files=True for the file_uploader function.
    
-    b. Let’s upload a PDF – Amazon Aurora FAQs. Download/save this file and upload it to your Streamlit application by clicking Browse files. Once you’ve uploaded the file, click Process. Once the PDF is uploaded successfully, you will see a PDF uploaded successfully.
+    b. Let’s upload a PDF – [Amazon Aurora FAQs](https://github.com/aws-solutions-library-samples/guidance-for-high-speed-rag-chatbots-on-aws/blob/main/source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/data/Amazon%20Aurora%20FAQs.pdf). Download/save this file and upload it to your Streamlit application by clicking Browse files. Once you’ve uploaded the file, click Process. Once the PDF is uploaded successfully, you will see a PDF uploaded successfully.
 
    ![](source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/static/execution5a.png)
 
