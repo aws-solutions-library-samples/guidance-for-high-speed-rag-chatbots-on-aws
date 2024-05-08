@@ -110,9 +110,12 @@ In this sample code deployment we are using Linux operating system for Cloud9 EC
     # Install JQuery for parsing output
     sudo yum install -y jq
 
-    # Install PostgreSQL 14 client and related utilities
+    # Install PostgreSQL 14 client and related utilities (Amazon Linux 2)
     sudo amazon-linux-extras install -y postgresql14
     sudo yum install -y postgresql-contrib sysbench
+
+    <or> For Amazon Linux 3
+    sudo yum install -y postgresql* 
     ```
 
   6. [Connect to deployed Aurora PostgreSQL cluster](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/babelfish-connect-PostgreSQL.html) and create the below extension using psql.
