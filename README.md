@@ -70,7 +70,7 @@ In this sample code deployment we are using Linux operating system for Cloud9 EC
 
 ### Environment setup
 
-1. Clone the GitHub repository to your local machine:
+1. Clone the GitHub repository to your local machine or AWS Cloud9 IDE:
     ```
     git clone https://github.com/aws-solutions-library-samples/guidance-for-high-speed-rag-chatbots-on-aws.git
     ```
