@@ -61,45 +61,84 @@ The following table provides a sample cost breakdown for deploying this Guidance
 
 ## Prerequisites
 
-1. An [Aurora PostgreSQL-Compatible Edition DB cluster](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_GettingStartedAurora.CreatingConnecting.AuroraPostgreSQL.html) with [pgvector](https://aws.amazon.com/about-aws/whats-new/2023/07/amazon-aurora-postgresql-pgvector-vector-storage-similarity-search/) support.
-2. Access to [Amazon Bedrock foundation models](https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html) – Amazon Titan and Anthropic Claude.
-3. We recommend using [AWS Cloud9](https://aws.amazon.com/cloud9/) to connect to the Aurora PostgreSQL DB cluster for these guidance without the need to open inbound ports, maintain bastion hosts, or manage SSH keys. We also recommend using Mozilla Firefox as the preferred browser. If you don't already have it, you can download it from [Mozilla Firefox](https://www.mozilla.org/en-US/firefox/new/).
-4. [Install Python](https://docs.aws.amazon.com/cloud9/latest/user-guide/sample-python.html) with the required dependencies (in this post, we use Python v3.9) on AWS Cloud9 IDE. You can deploy this solution locally on your laptop or via Amazon SageMaker Notebooks.
+1. [Amazon Bedrock](https://aws.amazon.com/bedrock/) requires you to request access to its foundational models as a pre-requisite before you can start invoking the model using Bedrock APIs.Below we will configure [model access](https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html) in Amazon Bedrock in order to build and run generative AI applications. Amazon Bedrock provides a variety of foundation models from several providers such as AI21 Labs, Anthropic, Cohere, Meta, Stability AI, and Amazon.
+
+#### Amazon Bedrock Setup Instructions
+- In the [AWS Console](https://aws.amazon.com/console/), select the Region from which you want to access Amazon Bedrock.
+- For this guidance , we will be using the `us-west-2` region.
+  ![](source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/static/Amazon_Bedrock_Region.png)
+
+- Search for Amazon Bedrock by typing in the search bar on the AWS console.
+  ![](source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/static/Bedrock_Console.png)
+
+- Expand the side menu with three horizontal lines (as shown below), select Model access and click on Enable specific models button.
+  ![](source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/static/Bedrock-Expand.png)
+  ![](source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/static/Bedrock_Model_Access.png)
+
+- For this guidance, we'll be using Anthropic's Claude 3 models as LLMs and Amazon Titan family of embedding models. Click Next in the bottom right corner to review and submit.
+  ![](source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/static/Bedrock_Check_Model_Access.png)
+  ![](source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/static/Bedrock_Submit_Model_Access.png)
+  
+- You will be granted access to Amazon Titan models instantly. The Access status column will change to In progress for Anthropic Claude 3 momentarily. Keep reviewing the Access status column. You may need to refresh the page periodically. You should see Access granted shortly (wait time is typically 1-3 mins).
+  ![](source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/static/Bedrock_Model_Access_In_Progress.png)
+  ![](source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/static/Bedrock_Access_Granted.png)
+
+2. We recommend using Mozilla Firefox as the preferred browser for running the AWS Cloud9 Console. If you don't already have it, you can download it from [Mozilla Firefox](https://www.mozilla.org/en-US/firefox/new/).
+
 
 ### Operating System
 In this sample code deployment we are using Linux operating system for Cloud9 EC2 instance and Amazon Aurora Postgresql instance.
 
-### Environment setup
+## Deployment Steps
 
-1. Clone the GitHub repository to your local machine or AWS Cloud9 IDE:
+#### 1. Clone the GitHub repository to access the AWS CFN deployment template.
+
     ```
     git clone https://github.com/aws-solutions-library-samples/guidance-for-high-speed-rag-chatbots-on-aws.git
+    cd ./guidance-for-high-speed-rag-chatbots-on-aws
     ```
-   
-2. Navigate to source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs folder in terminal of your choice:
+#### 2. Deploy the AWS CloudFormation Stack
+This guidance utilizes the `AdministratorAccess` role for deployment. For use in a production environment, refer to the [security best practices](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html) in the AWS Identity and Access Management (IAM) documentation and modify the IAM roles, Amazon Aurora, and other services used as needed.
+
+* Using the AWS Management Console
+
+    * Sign in to the [AWS CloudFormation console](https://console.aws.amazon.com/cloudformation/home)
+    * Create Stack > Upload the `guidance-for-high-speed-rag-chatbots-on-aws/source/templates/prereq-rag-chatbots-on-aws.yml` file
+    * Deploy the stack after entering `rag-chatbots` in the stack name
+        * The parameters can be changed, but we recommend the default values for a smooth deployment.
+     
+#### 3. Deployment Validation
+
+Open the AWS CloudFormation console and verify the status of the stack deployment with the name starting with `rag-chatbots`.
+
+Deploying this stack automatically creates the following resources:
+
+- **VPC, Subnet, Internet Gateway, Security Groups, Route Table:** A VPC with public and private subnets, an internet gateway for public access, and Secrutiy Groups & Route Table for access control.
+- **Amazon Aurora PostgreSQL cluster:** An Amazon Aurora PostgreSQL cluster consisting of a provisioned writer instance, a provisioned reader instance
+- **AWS Cloud9 IDE** AWS Cloud9 is a cloud-based integrated development environment (IDE) that lets you write, run, and debug your code with just a browser.
+- **AWS Secrets Manager , AWS Key Management Service:** AWS Secrets Manager helps you manage, retrieve database credentials and AWS Key Management Service to encrypt the database cluster.
+- **AWS Identity and Access Management - IAM Roles** IAM Roles defined with a set of permissions, allowing them to perform actions on AWS resources deployed in this guidance.
+- **[Optional] - You can see the detailed output in the AWS CloudFormation Stack `rag-chabots` using below AWS CLI command.**
 
     ```
-    cd guidance-for-high-speed-rag-chatbots-on-aws/source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs 
+    aws cloudformation describe-stacks --stack-name rag-chatbots --query 'Stacks[0].Outputs' --output table --no-cli-pager
     ```
+    
+## Running the Guidance
+#### 1. Setup the environment in AWS Cloud9 to connect to Aurora PostgreSQL DB Cluster
 
-3. Create a .env file in your project directory to add your Aurora PostgreSQL DB cluster details. Your .env file should like the following:
+- Navigate to the [AWS Cloud9 Console](https://console.aws.amazon.com/cloud9/home). You will see a Cloud9 Environment created by CloudFormation Stack with name `genai-pgvector-rag-chatbots-Cloud9-IDE`. Click on `Open`, a Cloud9 Environment will load and you will see Welcome page. Within the Cloud9 IDE, click on Window in the Top Menu and then Click on **New Terminal**
+- Use the code block below to setup the environment (use the Copy button on the right to copy code and paste it on the AWS Cloud9 Terminal)
 
-    ```
-    PGVECTOR_DRIVER='psycopg2'
-    PGVECTOR_USER='<<Username>>'
-    PGVECTOR_PASSWORD='<<Password>>'
-    PGVECTOR_HOST='<<Aurora DB cluster host>>'
-    PGVECTOR_PORT=5432
-    PGVECTOR_DATABASE='<<DBName>>'
-    ```
+     ```bash
+    # Clone the GitHub repository to your AWS Cloud9 IDE:
+    git clone https://github.com/aws-solutions-library-samples/guidance-for-high-speed-rag-chatbots-on-aws.git
+     
+    cd guidance-for-high-speed-rag-chatbots-on-aws/source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs
 
-4. The GitHub repository you cloned earlier includes a file requirements.txt which has all the required libraries you need to install for building the QnA chatbot application. Install the libraries by running the following commands:
-    ```
+    # The requirements.txt file has all the required libraries need to install for building the QnA chatbot application 
     pip3.9 install -r requirements.txt
-    ```
 
-5. Update the AWS CLI and Install PostgreSQL to establish connectivity to Aurora using AWS Cloud9 IDE.
-    ```
     # Update the AWS CLI v2
     sudo rm -rf /usr/local/aws
     sudo rm /usr/bin/aws
@@ -110,192 +149,38 @@ In this sample code deployment we are using Linux operating system for Cloud9 EC
 
     # Install JQuery for parsing output
     sudo yum install -y jq
+    
+    # Setup your environment variables to connect to Aurora PostgreSQL
+    AWSREGION=`aws configure get region`
+    
+    PGHOST=`aws rds describe-db-cluster-endpoints \
+        --db-cluster-identifier apgpg-pgvector \
+        --region $AWSREGION \
+        --query 'DBClusterEndpoints[0].Endpoint' \
+        --output text`
+    
+    # Retrieve credentials from Secrets Manager - Secret: apgpg-pgvector-secret-$AWSREGION
+    CREDS=`aws secretsmanager get-secret-value \
+        --secret-id apgpg-pgvector-secret-$AWSREGION \
+        --region $AWSREGION | jq -r '.SecretString'`
+    
+    export PGUSER="`echo $CREDS | jq -r '.username'`"
+    export PGPASSWORD="`echo $CREDS | jq -r '.password'`"    
+    export PGHOST
 
-    # Install PostgreSQL 14 client and related utilities (Amazon Linux 2)
+    # Persist values in future terminals
+    echo "export PGUSER=$PGUSER" >> /home/ec2-user/.bashrc
+    echo "export PGPASSWORD='$PGPASSWORD'" >> /home/ec2-user/.bashrc
+    echo "export PGHOST=$PGHOST" >> /home/ec2-user/.bashrc
+    
+    # Install PostgreSQL 14 client and related utilities
     sudo amazon-linux-extras install -y postgresql14
-    sudo yum install -y postgresql-contrib sysbench
 
-    <or> For Amazon Linux 3
-    sudo yum install -y postgresql* 
+    # Create pgvector extension
+    psql -c "CREATE EXTENSION IF NOT EXISTS vector;"
     ```
 
-  6. [Connect to deployed Aurora PostgreSQL cluster](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/babelfish-connect-PostgreSQL.html) and create the below extension using psql.
-
-        ```
-        psql
-        CREATE EXTENSION vector;
-        \q
-        ```
-
-## Deployment Steps
-
-To use the GenAI Q&A with pgvector and Amazon Aurora PostgreSQL App, follow these steps:
-
-1. Ensure that you have installed the required dependencies and have access to Amazon Bedrock models that you wish to use.
-
-2. Ensure that you have added Aurora PostgreSQL DB details to the `.env` file.
-
-3. Ensure you have installed the extension `pgvector` on your Aurora PostgreSQL DB cluster:
-
-
-### Build Streamlit application
-
-This guide will walk you through each step to understand and run the code provided in the file `rag_app.py`. Follow the instructions below. 
-
-**Steps**:
-
-1. Navigate to the folder `/source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/` in the Cloud9 IDE window on the left, and double-click to open the file `rag_app.py` in a new tab.
-
-2. Import libraries
-
-Let’s begin by importing the necessary libraries:
-```
-# Import libraries
-from dotenv import load_dotenv
-from PyPDF2 import PdfReader
-from langchain.vectorstores.pgvector import PGVector
-from langchain.memory import ConversationSummaryBufferMemory
-from langchain.chains import ConversationalRetrievalChain
-from htmlTemplates import css
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import BedrockEmbeddings
-from langchain_community.llms import Bedrock
-from langchain_community.chat_models import BedrockChat
-from langchain.prompts import PromptTemplate
-import streamlit as st
-import boto3
-from PIL import Image
-import os
-import traceback
-```
-
-> [!Note]
-> Next, you will find a series of placeholders separated by `# TODO` comments. Go through the remaining steps by filling in the correct code blocks in those placeholders (use the Copy button on the right to copy code).
-
-2. Take PDFs as input and extract text
-
-This function takes a list of PDF documents as input and extracts the text from them using PdfReader. It concatenates the extracted text and returns it.
-
-```
-def get_pdf_text(pdf_docs):
-    text = ""
-    for pdf in pdf_docs:
-        pdf_reader = PdfReader(pdf)
-        for page in pdf_reader.pages:
-            text += page.extract_text()
-    return text
-```
-
-3. Split PDF(s) into chunks
-
-Given the extracted text, this function splits it into smaller chunks using LangChain’s RecursiveCharacterTextSplitter module. The chunk size, overlap, and other parameters are configured to optimize processing efficiency.
-```
-def get_text_chunks(text):
-    text_splitter = RecursiveCharacterTextSplitter(
-        separators=["\n\n", "\n", ".", " "],
-        chunk_size=1000, 
-        chunk_overlap=200, 
-        length_function=len
-     )
-
-    chunks = text_splitter.split_text(text)
-    return chunks
-```
-
-4. Load vector embeddings into Amazon Aurora PostgreSQL
-
-Next, you will load the vector embeddings using Amazon Bedrock’s Embedding model amazon.titan-embed-text-v2 into an Aurora PostgreSQL DB cluster as the vector database. This function takes the text chunks as input and creates a vector store using Bedrock Embeddings (Titan) and pgvector. Aurora PostgreSQL with the pgvector extension stores the vector representations of the text chunks, enabling efficient retrieval based on semantic similarity.
-
-```
-def get_vectorstore(text_chunks):
-    # Create the Titan embeddings
-    embeddings = BedrockEmbeddings(model_id= "amazon.titan-embed-text-v1", client=BEDROCK_CLIENT)
-    if text_chunks is None:
-        return PGVector(
-            connection_string=CONNECTION_STRING,
-            embedding_function=embeddings,
-        )
-    return PGVector.from_texts(texts=text_chunks, embedding=embeddings, connection_string=CONNECTION_STRING)
-```
-
-> [!Important]
-> PGVector needs the connection string to the database. You can create it from environment variables as shown in the screenshot below: For this lab, scroll down to the main function to find this code, and fill in the values for your Aurora PostgreSQL DB connection. 
-
-![](source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/static/streamlit_loadvectors.png)
-
-5. Create a Conversational Chain
-
-In this function, a conversation chain is created using the conversational AI model (Anthropic’s Claude 3 Sonnet v1.0), vector store (created in the previous function), and conversation memory ConversationSummaryBufferMemory. This chain allows the generative AI application to engage in conversational interactions.
-```
-def get_conversation_chain(vectorstore):
-    # Define model_id, client and model keyword arguments for Anthropic Claude v3
-    llm = BedrockChat(model_id="anthropic.claude-3-sonnet-20240229-v1:0", client=BEDROCK_CLIENT)
-    llm.model_kwargs = {"temperature": 0.5, "max_tokens": 8191}
-    
-    # The text that you give Claude is designed to elicit, or "prompt", a relevant output. A prompt is usually in the form of a question or instructions. When prompting Claude through the API, it is very important to use the correct `\n\nHuman:` and `\n\nAssistant:` formatting.
-    # Claude was trained as a conversational agent using these special tokens to mark who is speaking. The `\n\nHuman:` (you) asks a question or gives instructions, and the`\n\nAssistant:` (Claude) responds.
-    prompt_template = """Human: You are a helpful assistant that answers questions directly and only using the information provided in the context below. 
-    Guidance for answers:
-        - Always use English as the language in your responses.
-        - In your answers, always use a professional tone.
-        - Begin your answers with "Based on the context provided: "
-        - Simply answer the question clearly and with lots of detail using only the relevant details from the information below. If the context does not contain the answer, say "Sorry, I didn't understand that. Could you rephrase your question?"
-        - Use bullet-points and provide as much detail as possible in your answer. 
-        - Always provide a summary at the end of your answer.
-        
-    Now read this context below and answer the question at the bottom.
-    
-    Context: {context}
-
-    Question: {question}
-    
-    Assistant:"""
-
-    PROMPT = PromptTemplate(
-        template=prompt_template, input_variables=["context", "question"]
-    )
-    
-    memory = ConversationSummaryBufferMemory(
-        llm=llm,
-        memory_key='chat_history',
-        return_messages=True,
-        ai_prefix="Assistant",
-        output_key='answer')
-    
-    conversation_chain = ConversationalRetrievalChain.from_llm(
-        llm=llm,
-        chain_type="stuff",
-        return_source_documents=True,
-        retriever=vectorstore.as_retriever(
-            search_type="similarity",
-            search_kwargs={"k": 3, "include_metadata": True}),
-        get_chat_history=lambda h : h,
-        memory=memory,
-        combine_docs_chain_kwargs={'prompt': PROMPT}
-    )
-    
-    return conversation_chain.invoke
-```
-> [!Note] 
-> Hit Save Remember to save your file! Press Cmd+S on Mac or Ctrl+S on Windows to save your file. Alternatively, click File --> Save.
-
-6. Create a function to handle user input
-
-This function is responsible for processing the user’s input question and generating a response from the chatbot.
-
-![](source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/static/streamlit_createfunction.png)
-
-7. Create the Streamlit components
-
-Streamlit is an open-source Python library that makes it simple to create and share beautiful, custom web apps for machine learning and data science. In just a few minutes you can build and deploy powerful data apps.
-
-![](source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/static/streamlit_createfunction.png)
-
-## Deployment Validation
-
-Ensure there are no errors in your application and each of the steps in the deployment section completed successfully.
-
-## Running the Guidance
+#### Running the Streamlit Application as Chatbot
 
 Now that you have successfully written code for your generative AI chatbot application, it’s time to run the application via Streamlit.
 
@@ -303,11 +188,11 @@ Now that you have successfully written code for your generative AI chatbot appli
 
 Run the following command:
 ```
-streamlit run rag_app.py --server.port 8080
+streamlit run app.py --server.port 8080
 ```
 2. If the command is successful, your output screen will look like below (note: we are using AWS Cloud9 terminal):
 
-![](source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/static/execution2_streamlit_output.png)
+   ![](source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/static/execution2_streamlit_output.png)
 
 3. In Cloud9, you are able to preview a running application from within the IDE. Choose Preview -> Preview Running Application from the menu bar:
 
