@@ -134,15 +134,7 @@ Deploying this stack automatically creates the following resources:
 - Navigate to the [AWS Cloud9 Console](https://console.aws.amazon.com/cloud9/home). You will see a Cloud9 Environment created by CloudFormation Stack with name `genai-pgvector-rag-chatbots-Cloud9-IDE`. Click on `Open`, a Cloud9 Environment will load and you will see Welcome page. Within the Cloud9 IDE, click on Window in the Top Menu and then Click on **New Terminal**
 - Use the code block below to setup the environment (use the Copy button on the right to copy code and paste it on the AWS Cloud9 Terminal)
 
-     ```bash
-    # Clone the GitHub repository to your AWS Cloud9 IDE:
-    git clone https://github.com/aws-solutions-library-samples/guidance-for-high-speed-rag-chatbots-on-aws.git
-     
-    cd guidance-for-high-speed-rag-chatbots-on-aws/source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs
-
-    # The requirements.txt file has all the required libraries need to install for building the QnA chatbot application 
-    pip3.9 install -r requirements.txt
-
+     ```bash 
     # Update the AWS CLI v2
     sudo rm -rf /usr/local/aws
     sudo rm /usr/bin/aws
@@ -150,9 +142,32 @@ Deploying this stack automatically creates the following resources:
     unzip awscliv2.zip
     sudo ./aws/install
     rm awscliv2.zip
+ 
+    # Install Python 3.11
+    sudo yum remove -y openssl-devel
+    sudo yum install -y gcc openssl11-devel bzip2-devel libffi-devel 
+    cd /opt
+    sudo wget https://www.python.org/ftp/python/3.11.9/Python-3.11.9.tgz 
+    sudo tar xzf Python-3.11.9.tgz
+    cd Python-3.11.9
+    sudo ./configure --enable-optimizations 
+    sudo make altinstall
+    sudo rm -f /opt/Python-3.11.9.tgz
+    pip install --upgrade pip
 
+    # The requirements.txt file has all the required libraries you need to install for building the QnA chatbot application
+    python3.11 -m pip install -r requirements.txt 
+     
+    # Clone the GitHub repository to your AWS Cloud9 IDE:
+    git clone https://github.com/aws-solutions-library-samples/guidance-for-high-speed-rag-chatbots-on-aws.git
+    cd ~/environment/guidance-for-high-speed-rag-chatbots-on-aws/source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs
+     
     # Install JQuery for parsing output
     sudo yum install -y jq
+    
+    # Install PostgreSQL 14 client and related utilities
+    sudo amazon-linux-extras install -y postgresql14
+    sudo yum install -y postgresql-contrib sysbench
     
     # Setup your environment variables to connect to Aurora PostgreSQL
     AWSREGION=`aws configure get region`
@@ -163,26 +178,53 @@ Deploying this stack automatically creates the following resources:
         --query 'DBClusterEndpoints[0].Endpoint' \
         --output text`
     
-    # Retrieve credentials from Secrets Manager - Secret: apgpg-pgvector-secret-$AWSREGION
+    # Retrieve credentials from Secrets Manager - Secret: apgpg-pgvector-secret
     CREDS=`aws secretsmanager get-secret-value \
-        --secret-id apgpg-pgvector-secret-$AWSREGION \
+        --secret-id apgpg-pgvector-secret \
         --region $AWSREGION | jq -r '.SecretString'`
     
     export PGUSER="`echo $CREDS | jq -r '.username'`"
     export PGPASSWORD="`echo $CREDS | jq -r '.password'`"    
     export PGHOST
-
+    export PGDATABASE=postgres
+    export PGPORT=5432
+    export AWSREGION
+    
     # Persist values in future terminals
     echo "export PGUSER=$PGUSER" >> /home/ec2-user/.bashrc
     echo "export PGPASSWORD='$PGPASSWORD'" >> /home/ec2-user/.bashrc
     echo "export PGHOST=$PGHOST" >> /home/ec2-user/.bashrc
-    
-    # Install PostgreSQL 14 client and related utilities
-    sudo amazon-linux-extras install -y postgresql14
+    echo "export PGPORT=5432" >> /home/ec2-user/.bashrc
+    echo "export PGDATABASE=postgres" >> /home/ec2-user/.bashrc
+    echo "export AWSREGION=$AWSREGION" >> /home/ec2-user/.bashrc
+
 
     # Create pgvector extension
     psql -c "CREATE EXTENSION IF NOT EXISTS vector;"
+
+    # create an .env file for your project
+    cd ~/environment/guidance-for-high-speed-rag-chatbots-on-aws/source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs
+    cat > .env << EOF
+    PGVECTOR_USER='$PGUSER'
+    PGVECTOR_PASSWORD='$PGPASSWORD'
+    PGVECTOR_HOST='$PGHOST'
+    PGVECTOR_PORT=$PGPORT
+    PGVECTOR_DATABASE='$PGDATABASE'
+    EOF
+    
+    cat .env 
     ```
+     
+    Your .env file should like the following:
+
+    ```
+    PGVECTOR_USER=<username>
+    PGVECTOR_PASSWORD=<password>
+    PGVECTOR_HOST=<Aurora DB endpoint>
+    PGVECTOR_PORT=5432
+    PGVECTOR_DATABASE=<dbname>
+    ```
+
 
 #### Running the Streamlit Application as Chatbot
 
