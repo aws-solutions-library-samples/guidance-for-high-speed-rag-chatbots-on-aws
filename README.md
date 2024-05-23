@@ -154,13 +154,13 @@ Deploying this stack automatically creates the following resources:
     sudo make altinstall
     sudo rm -f /opt/Python-3.11.9.tgz
     pip install --upgrade pip
-
-    # The requirements.txt file has all the required libraries you need to install for building the QnA chatbot application
-    python3.11 -m pip install -r requirements.txt 
      
     # Clone the GitHub repository to your AWS Cloud9 IDE:
     git clone https://github.com/aws-solutions-library-samples/guidance-for-high-speed-rag-chatbots-on-aws.git
     cd ~/environment/guidance-for-high-speed-rag-chatbots-on-aws/source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs
+
+    # The requirements.txt file has all the required libraries you need to install for building the QnA chatbot application
+    python3.11 -m pip install -r requirements.txt 
      
     # Install JQuery for parsing output
     sudo yum install -y jq
