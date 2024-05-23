@@ -7,13 +7,12 @@
 2. [Prerequisites](#prerequisites)
     - [Operating System](#operating-system)
 3. [Deployment Steps](#deployment-steps)
-4. [Deployment Validation](#running-the-guidance)
-5. [Running the Guidance](#running-the-guidance)
-6. [Next Steps](#next-steps)
-7. [Cleanup](#cleanup)
-8. [Notices](#notices)
-9. [Known Issues](#known-issues)
-10. [Authors](#authors)
+4. [Running the Guidance](#running-the-guidance)
+5. [Next Steps](#next-steps)
+6. [Cleanup](#cleanup)
+7. [Notices](#notices)
+8. [Known Issues](#known-issues)
+9. [Authors](#authors)
 
 ## Overview
 Generative AI – a category of artificial intelligence algorithms that can generate new content based on existing data — has been hailed as the next frontier for various industries, from tech to financial services, e-commerce and healthcare. The driving force behind the capabilities of generative AI chatbots lies in their foundation models. These models consist of expansive neural networks meticulously trained on vast amounts of unstructured, unlabeled data spanning various formats, including text and audio. The versatility of foundation models enables their utilization across a wide range of tasks, showcasing their limitless potential. In this Guidance, we will build an AI chatbot using Amazon Aurora PostgreSQL-Compatible Edition with pgvector enabled as the vector store. You can create an enterprise ready RAG application using a combination of different services including Amazon Bedrock, Amazon Aurora with pgvector as vector database, open-source frameworks such as LangChain for interacting with all the components and Streamlit for building chatbot frontend.
