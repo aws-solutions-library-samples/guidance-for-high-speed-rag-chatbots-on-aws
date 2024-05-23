@@ -289,7 +289,7 @@ Resources:
   RDSSecrets:
     Type: AWS::SecretsManager::Secret
     Properties:
-      Name: "apgpg-pgvector-secret"
+      Name: !Sub apgpg-pgvector-secret-${AWS::Region}
       Description: 'This is the secret for Aurora cluster'
       GenerateSecretString:
         SecretStringTemplate: '{"username": "postgres" }'
