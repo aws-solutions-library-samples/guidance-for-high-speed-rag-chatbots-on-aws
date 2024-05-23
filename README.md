@@ -103,7 +103,7 @@ In this sample code deployment we are using Linux operating system for Cloud9 EC
 This guidance utilizes the `AdministratorAccess` role for deployment. For use in a production environment, refer to the [security best practices](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html) in the AWS Identity and Access Management (IAM) documentation and modify the IAM roles, Amazon Aurora, and other services used as needed.
 
 * Using the AWS Management Console
-
+    * For this guidance , we will be using the us-west-2 region. 
     * Sign in to the [AWS CloudFormation console](https://console.aws.amazon.com/cloudformation/home)
     * Create Stack > Upload the `guidance-for-high-speed-rag-chatbots-on-aws/source/templates/prereq-rag-chatbots-on-aws.yml` file
     * Deploy the stack after entering `rag-chatbots` in the stack name
@@ -120,7 +120,7 @@ Deploying this stack automatically creates the following resources:
 - **AWS Cloud9 IDE** AWS Cloud9 is a cloud-based integrated development environment (IDE) that lets you write, run, and debug your code with just a browser.
 - **AWS Secrets Manager , AWS Key Management Service:** AWS Secrets Manager helps you manage, retrieve database credentials and AWS Key Management Service to encrypt the database cluster.
 - **AWS Identity and Access Management - IAM Roles:** IAM Roles defined with a set of permissions, allowing them to perform actions on AWS resources deployed in this guidance.
-- **Amazon S3 Bucket:**Amazon Simple Storage Service (Amazon S3) is an object storage service to store and retrieve any amount of data at any time, from anywhere.
+- **Amazon S3 Bucket:**Amazon Simple Storage Service (Amazon S3) is an object storage service to store and retrieve any data at any time, from anywhere.
 - **[Optional] - You can see the detailed output in the AWS CloudFormation Stack `rag-chabots` using below AWS CLI command.**
 
     ```
