@@ -83,6 +83,9 @@ The following table provides a sample cost breakdown for deploying this Guidance
   ![](source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/static/Bedrock_Model_Access_In_Progress.png)
   ![](source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs/static/Bedrock_Access_Granted.png)
 
+> [!Note]
+> Now you have successfully configured Amazon Bedrock.
+
 2. We recommend using Mozilla Firefox as the preferred browser for running the AWS Cloud9 Console. If you don't already have it, you can download it from [Mozilla Firefox](https://www.mozilla.org/en-US/firefox/new/).
 
 
@@ -117,7 +120,8 @@ Deploying this stack automatically creates the following resources:
 - **Amazon Aurora PostgreSQL cluster:** An Amazon Aurora PostgreSQL cluster consisting of a provisioned writer instance, a provisioned reader instance
 - **AWS Cloud9 IDE** AWS Cloud9 is a cloud-based integrated development environment (IDE) that lets you write, run, and debug your code with just a browser.
 - **AWS Secrets Manager , AWS Key Management Service:** AWS Secrets Manager helps you manage, retrieve database credentials and AWS Key Management Service to encrypt the database cluster.
-- **AWS Identity and Access Management - IAM Roles** IAM Roles defined with a set of permissions, allowing them to perform actions on AWS resources deployed in this guidance.
+- **AWS Identity and Access Management - IAM Roles:** IAM Roles defined with a set of permissions, allowing them to perform actions on AWS resources deployed in this guidance.
+- **Amazon S3 Bucket:**Amazon Simple Storage Service (Amazon S3) is an object storage service to store and retrieve any amount of data at any time, from anywhere.
 - **[Optional] - You can see the detailed output in the AWS CloudFormation Stack `rag-chabots` using below AWS CLI command.**
 
     ```
