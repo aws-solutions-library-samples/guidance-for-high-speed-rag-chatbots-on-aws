@@ -131,7 +131,7 @@ Deploying this stack automatically creates the following resources:
 #### 1. Setup the environment in AWS Cloud9 to connect to Aurora PostgreSQL DB Cluster
 
 - Navigate to the [AWS Cloud9 Console](https://console.aws.amazon.com/cloud9/home). You will see a Cloud9 Environment created by CloudFormation Stack with name `genai-pgvector-rag-chatbots-Cloud9-IDE`. Click on `Open`, a Cloud9 Environment will load and you will see Welcome page. Within the Cloud9 IDE, click on Window in the Top Menu and then Click on **New Terminal**
-- Use the code block below to setup the environment (use the Copy button on the right to copy code and paste it on the AWS Cloud9 Terminal)
+- Use the code block below to setup the environment (use the Copy button on the right to copy code and paste it on the AWS Cloud9 Terminal). Execute the code blocks one by one
 
      ```bash 
     # Update the AWS CLI v2
@@ -153,9 +153,14 @@ Deploying this stack automatically creates the following resources:
     sudo make altinstall
     sudo rm -f /opt/Python-3.11.9.tgz
     pip install --upgrade pip
+     ```
      
+     ```
     # Clone the GitHub repository to your AWS Cloud9 IDE:
     git clone https://github.com/aws-solutions-library-samples/guidance-for-high-speed-rag-chatbots-on-aws.git
+     ```
+     
+     ```
     cd ~/environment/guidance-for-high-speed-rag-chatbots-on-aws/source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs
 
     # The requirements.txt file has all the required libraries you need to install for building the QnA chatbot application
@@ -222,7 +227,7 @@ Deploying this stack automatically creates the following resources:
     PGVECTOR_HOST=<Aurora DB endpoint>
     PGVECTOR_PORT=5432
     PGVECTOR_DATABASE=<dbname>
-    ```
+     ```
 
 
 #### Running the Streamlit Application as Chatbot
