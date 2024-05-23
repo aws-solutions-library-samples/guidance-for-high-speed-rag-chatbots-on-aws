@@ -304,7 +304,12 @@ In this Guidance we are using Amazon Titan text embedding model to generate embe
 
 ## Cleanup
 
-This Guidance requires manual deletion of resources created as part of this guidance. If AWS Cloud9 instance and Amazon Aurora DB Cluster were newly created following the steps per this guidance, then those have to be manually deleted when no longer required. 
+When no longer needed, you can delete the resources manually or by deleting the entire AWS CloudFormation stack.
+
+- If you want to delete the entire stack using the CloudFormation console:
+    * Sign in to the [AWS CloudFormation console](https://console.aws.amazon.com/cloudformation/home)
+    * Select the Stack `rag-chatbots` and click on delete.
+
 
 ## Notices
 
