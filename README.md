@@ -161,7 +161,7 @@ Deploying this stack automatically creates the following resources:
      ```
      
      ```
-    cd ~/environment/guidance-for-high-speed-rag-chatbots-on-aws/source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs
+    cd ~/environment/guidance-for-high-speed-rag-chatbots-on-aws-main/source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs
 
     # The requirements.txt file has all the required libraries you need to install for building the QnA chatbot application
     python3.11 -m pip install -r requirements.txt 
@@ -207,7 +207,7 @@ Deploying this stack automatically creates the following resources:
     psql -c "CREATE EXTENSION IF NOT EXISTS vector;"
 
     # create an .env file for your project
-    cd ~/environment/guidance-for-high-speed-rag-chatbots-on-aws/source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs
+    cd ~/environment/guidance-for-high-speed-rag-chatbots-on-aws-main/source/01_RetrievalAugmentedGeneration/01_QuestionAnswering_Bedrock_LLMs
     cat > .env << EOF
     PGVECTOR_USER='$PGUSER'
     PGVECTOR_PASSWORD='$PGPASSWORD'
