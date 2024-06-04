@@ -58,6 +58,10 @@ The following table provides a sample cost breakdown for deploying this Guidance
 | ----------- | ------------ | ------------ |
 | Amazon Aurora | db.r6g.2xlarge  | $1.038 |
 
+| AWS service  | Compute Fees | Storage fees | Total Monthly Fees |
+| ------------ | ------------ | ------------ | -------------------|
+| AWS Cloud9|  | $1.05        | $1.00        | $2.05              |
+
 ## Prerequisites
 
 1. [Amazon Bedrock](https://aws.amazon.com/bedrock/) requires you to request access to its foundational models as a pre-requisite before you can start invoking the model using Bedrock APIs.Below we will configure [model access](https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html) in Amazon Bedrock in order to build and run generative AI applications. Amazon Bedrock provides a variety of foundation models from several providers such as AI21 Labs, Anthropic, Cohere, Meta, Stability AI, and Amazon.
