@@ -60,7 +60,7 @@ The following table provides a sample cost breakdown for deploying this Guidance
 
 | AWS service  | Compute Fees | Storage fees | Total Monthly Fees |
 | ------------ | ------------ | ------------ | -------------------|
-| AWS Cloud9|  | $1.05        | $1.00        | $2.05              |
+| AWS Cloud9   | $1.05        | $1.00        | $2.05              |
 
 ## Prerequisites
 
