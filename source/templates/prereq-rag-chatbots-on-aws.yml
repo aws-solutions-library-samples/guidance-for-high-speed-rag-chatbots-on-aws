@@ -1,8 +1,6 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
-
-Description: >
-    This template deploys a VPC, Aurora DB Cluster, AWS Cloud9 and an Amazon S3 bucket
+Description: Guidance for High Speed RAG chatbots on AWS (SO9448). This template deploys a VPC, Aurora DB Cluster, AWS Cloud9 and an Amazon S3 bucket
 
 Parameters:
   TemplateName:
